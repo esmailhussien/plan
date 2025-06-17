@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم مشروعات الخطة الاستثمارية - محافظة الإسكندرية</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="advanced_analytics.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-city"></i>
+                    <h1>لوحة تحكم مشروعات الخطة الاستثمارية</h1>
+                    <p>محافظة الإسكندرية</p>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-project-diagram"></i>
+                        <div>
+                            <span class="stat-number" id="totalProjects">0</span>
+                            <span class="stat-label">إجمالي المشروعات</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <div>
+                            <span class="stat-number" id="totalBudget">0</span>
+                            <span class="stat-label">إجمالي الميزانية</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+        <div class="container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="overview">
+                    <i class="fas fa-chart-pie"></i>
+                    نظرة عامة
+                </button>
+                <button class="tab-btn" data-tab="projects">
+                    <i class="fas fa-list"></i>
+                    المشروعات
+                </button>
+                <button class="tab-btn" data-tab="analytics">
+                    <i class="fas fa-chart-bar"></i>
+                    التحليلات
+                </button>
+                <button class="tab-btn" data-tab="districts">
+                    <i class="fas fa-map-marked-alt"></i>
+                    الأحياء
+                </button>
+                <button class="tab-btn" data-tab="programs">
+                    <i class="fas fa-tasks"></i>
+                    البرامج
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="yearFilter">السنة:</label>
+                        <select id="yearFilter" class="filter-select">
+                            <option value="">جميع السنوات</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="districtFilter">الحي:</label>
+                        <select id="districtFilter" class="filter-select">
+                            <option value="">جميع الأحياء</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="programFilter">البرنامج الرئيسي:</label>
+                        <select id="programFilter" class="filter-select">
+                            <option value="">جميع البرامج</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="fundingFilter">مصدر التمويل:</label>
+                        <select id="fundingFilter" class="filter-select">
+                            <option value="">جميع المصادر</option>
+                            <option value="استثماري">استثماري</option>
+                            <option value="ذاتي">ذاتي</option>
+                        </select>
+                    </div>
+                    <button class="reset-filters-btn" onclick="resetFilters()">
+                        <i class="fas fa-undo"></i>
+                        إعادة تعيين
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-pane active">
+                    <div class="dashboard-grid">
+                        <div class="chart-container">
+                            <h3>توزيع المشروعات حسب البرنامج الرئيسي</h3>
+                            <canvas id="programChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>توزيع الميزانية حسب الأحياء</h3>
+                            <canvas id="districtChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>مقارنة مصادر التمويل</h3>
+                            <canvas id="fundingChart"></canvas>
+                        </div>
+                        <div class="infographic-container">
+                            <h3>إحصائيات سريعة</h3>
+                            <div class="infographic-header">
+                                <img src="infographic_investment.png" alt="Investment Infographic" class="infographic-image">
+                            </div>
+                            <div class="quick-stats">
+                                <div class="quick-stat">
+                                    <i class="fas fa-building"></i>
+                                    <span class="stat-value" id="avgProjectCost">0</span>
+                                    <span class="stat-desc">متوسط تكلفة المشروع</span>
+                                </div>
+                                <div class="quick-stat">
+                                    <i class="fas fa-hammer"></i>
+                                    <span class="stat-value" id="constructionPercentage">0%</span>
+                                    <span class="stat-desc">نسبة التشييدات</span>
+                                </div>
+                                <div class="quick-stat">
+                                    <i class="fas fa-cogs"></i>
+                                    <span class="stat-value" id="equipmentPercentage">0%</span>
+                                    <span class="stat-desc">نسبة المعدات</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects Tab -->
+                <div id="projects" class="tab-pane">
+                    <div class="projects-section">
+                        <div class="section-header">
+                            <h2>قائمة المشروعات</h2>
+                            <div class="search-container">
+                                <input type="text" id="searchInput" placeholder="البحث في المشروعات..." class="search-input">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="projects-table-container">
+                            <table id="projectsTable" class="projects-table">
+                                <thead>
+                                    <tr>
+                                        <th>السنة</th>
+                                        <th>الحي</th>
+                                        <th>البرنامج الرئيسي</th>
+                                        <th>المشروع الرئيسي</th>
+                                        <th>المشروع الفرعي</th>
+                                        <th>مصدر التمويل</th>
+                                        <th>الإجمالي</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projectsTableBody">
+                                    <!-- Projects will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analytics" class="tab-pane">
+                    <div class="analytics-section">
+                        <div class="analytics-header">
+                            <img src="analytics_banner.png" alt="Analytics Banner" class="analytics-banner">
+                            <h2>التحليلات المتقدمة</h2>
+                        </div>
+                        <div class="analytics-grid">
+                            <div class="chart-container">
+                                <h3>تحليل المكونات العينية</h3>
+                                <canvas id="componentsChart"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <h3>اتجاهات الإنفاق</h3>
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                            <div class="metrics-container">
+                                <h3>مؤشرات الأداء</h3>
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <i class="fas fa-percentage"></i>
+                                        <span class="metric-value" id="investmentRatio">0%</span>
+                                        <span class="metric-label">نسبة التمويل الاستثماري</span>
+                                    </div>
+                                    <div class="metric-card">
+                                        <i class="fas fa-chart-line"></i>
+                                        <span class="metric-value" id="avgBudgetPerDistrict">0</span>
+                                        <span class="metric-label">متوسط الميزانية لكل حي</span>
+                                    </div>
+                                    <div class="metric-card">
+                                        <i class="fas fa-balance-scale"></i>
+                                        <span class="metric-value" id="budgetDistribution">0</span>
+                                        <span class="metric-label">توزيع الميزانية</span>
+                                    </div>
+                                    <div class="metric-card">
+                                        <i class="fas fa-chart-pie"></i>
+                                        <span class="metric-value" id="budgetUtilization">0%</span>
+                                        <span class="metric-label">كفاءة استخدام الميزانية</span>
+                                    </div>
+                                    <div class="metric-card">
+                                        <i class="fas fa-project-diagram"></i>
+                                        <span class="metric-value" id="projectDiversity">0%</span>
+                                        <span class="metric-label">تنوع المشروعات</span>
+                                    </div>
+                                    <div class="metric-card">
+                                        <i class="fas fa-map-marked-alt"></i>
+                                        <span class="metric-value" id="geographicDistribution">0%</span>
+                                        <span class="metric-label">التوزيع الجغرافي</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Analytics Tools -->
+                        <div class="analytics-tools">
+                            <h3>أدوات التحليل المتقدمة</h3>
+                            <div class="tools-grid">
+                                <div class="tool-card">
+                                    <i class="fas fa-download"></i>
+                                    <h4>تصدير البيانات</h4>
+                                    <p>تصدير البيانات المفلترة إلى ملف CSV</p>
+                                    <button class="tool-btn" onclick="exportToCSV()">تصدير CSV</button>
+                                </div>
+                                <div class="tool-card">
+                                    <i class="fas fa-file-alt"></i>
+                                    <h4>تقرير ملخص</h4>
+                                    <p>إنشاء تقرير ملخص شامل للبيانات</p>
+                                    <button class="tool-btn" onclick="generateReport()">إنشاء تقرير</button>
+                                </div>
+                                <div class="tool-card">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <h4>رؤى ذكية</h4>
+                                    <p>عرض الرؤى والتوصيات المستخرجة من البيانات</p>
+                                    <button class="tool-btn" onclick="showInsights()">عرض الرؤى</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Insights Section -->
+                        <div class="insights-section" id="insightsSection" style="display: none;">
+                            <h3>الرؤى والتوصيات</h3>
+                            <div class="insights-grid" id="insightsContainer">
+                                <!-- Insights will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Districts Tab -->
+                <div id="districts" class="tab-pane">
+                    <div class="districts-section">
+                        <h2>تحليل الأحياء</h2>
+                        <div class="districts-grid" id="districtsGrid">
+                            <!-- District cards will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Programs Tab -->
+                <div id="programs" class="tab-pane">
+                    <div class="programs-section">
+                        <h2>تحليل البرامج</h2>
+                        <div class="programs-grid" id="programsGrid">
+                            <!-- Program cards will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Project Details Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">تفاصيل المشروع</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Project details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
